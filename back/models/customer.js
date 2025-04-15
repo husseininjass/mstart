@@ -1,19 +1,12 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../db/connection.js'; 
 import bcrypt from 'bcryptjs';
+
 const CustomerModel = sequelize.define('Customer', {
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-  },
-  Server_DateTime: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  DateTime_UTC: {
-    type: DataTypes.DATE,
-    allowNull: false,
   },
   Update_DateTime_UTC: {
     type: DataTypes.DATE,
@@ -22,6 +15,7 @@ const CustomerModel = sequelize.define('Customer', {
   Last_Login_DateTime_UTC: {
     type: DataTypes.DATE,
     allowNull: true,
+    defaultValue: null,
   },
   Name: {
     type: DataTypes.STRING(255),
@@ -69,14 +63,22 @@ const CustomerModel = sequelize.define('Customer', {
   Status: {
     type: DataTypes.STRING(50),
     allowNull: true,
+    defaultValue: 'active',
+    validate: {
+      isIn: {
+        args: [['active', 'deleted']],  
+        msg: 'Status must be either active or deleted'
+      }
+    }
   },
+  
   Gender: {
     type: DataTypes.STRING(10),
     allowNull: false,
     validate: {
       notEmpty: { msg: "Gender is required" },
       isIn: {
-        args: ['Male', 'Female'],
+        args: [['male', 'female']],
         msg: "Gender must be either male or female",
       },
     },
@@ -90,14 +92,17 @@ const CustomerModel = sequelize.define('Customer', {
     },
   },
 }, {
-  timestamps: false,
-  tableName: 'Customers', 
+  timestamps: true, 
+  tableName: 'Customers',
+  hooks: {
+    beforeCreate: async (customer) => {
+      if (customer.Password) {
+        customer.Password = await bcrypt.hash(customer.Password, 8);
+      }
+    },
+  },
 });
-CustomerModel.beforeCreate(async (customer) => {
-    if(customer.Password){
-      const salt = await bcrypt.genSalt(8);
-      customer.Password = await bcrypt.hash(customer.Password, salt);
-    }
-});
-  
+CustomerModel.prototype.validatePassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.Password);
+};
 export default CustomerModel;

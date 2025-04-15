@@ -15,8 +15,11 @@ const testConnection = async () => {
     }
 };
 testConnection();
+//golbalmidleware
+app.use(express.json());
 
-///middlewares 
+//
+///routers 
 app.use('/customer', customerRouter);
 
 
@@ -24,6 +27,6 @@ app.use('/customer', customerRouter);
 app.listen(process.env.PORT, ()=>{
     console.log(`server is working on port= ${process.env.PORT}`);
     sequelize.sync({ force: false }) 
-    .then(() => console.log('table has benn created '))
+    .then(() => {})
     .catch(error => console.error('error happened ', error));
 })
