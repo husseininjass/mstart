@@ -1,4 +1,5 @@
 import CustomerModel from "../models/customer.js";
+import jwt from 'jsonwebtoken';
 class Customer{
     async create(req,res){
         try {
@@ -35,7 +36,8 @@ class Customer{
             if(!isMatch){
                 return res.status(400).json({message: 'invalid email or password'});
             }
-            return res.status(200).json({message: 'logged in'})
+            const token = jwt.sign({id: loggedInUser.ID},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES})
+            return res.status(200).json({message: 'logged in',token})
         } catch (error) {
             return res.status(400).json({error})
         }
