@@ -52,5 +52,21 @@ class Product{
             return;
         }
     }
+    async updateStatus(req, res){
+        const productId = req.params.id;
+        try {
+            const product = await productModel.findByPk(productId);
+            if(!product){
+                return res.status(400).json({message: 'no product found'})
+            }
+            const newStatus = req.body.status;
+            product.Status = newStatus;
+            await product.save();
+            return res.status(200).json({message: 'product status has been updated'})
+        } catch (error) {
+            res.status(403).json({error});
+            return;
+        }
+    }
 }
 export default Product;

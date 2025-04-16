@@ -31,7 +31,7 @@ const productModel = sequelize.define('Products',{
         defaultValue: 'active',
         validate: {
           isIn: {
-            args: [['active', 'deleted','In Active']],  
+            args: [['active', 'deleted','In Active','Expired']],  
             msg: 'Status must be either active or deleted'
           }
         }
