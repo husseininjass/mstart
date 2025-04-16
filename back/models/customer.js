@@ -66,12 +66,11 @@ const CustomerModel = sequelize.define('Customer', {
     defaultValue: 'active',
     validate: {
       isIn: {
-        args: [['active', 'deleted']],  
+        args: [['active', 'deleted','In Active']],  
         msg: 'Status must be either active or deleted'
       }
     }
   },
-  
   Gender: {
     type: DataTypes.STRING(10),
     allowNull: false,
@@ -90,6 +89,13 @@ const CustomerModel = sequelize.define('Customer', {
       notEmpty: { msg: "Date of birth is required" },
       isDate: { msg: "Date of birth must be a valid date" },
     },
+  },
+  Photo: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    validate: {
+      isUrl: { msg: 'Photo must be a valid URL' }
+    }
   },
 }, {
   timestamps: true, 
