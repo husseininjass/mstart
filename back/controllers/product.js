@@ -69,26 +69,29 @@ class Product{
             return;
         }
     }
-    async getAllProducts(req, res){
+    async getAllProducts(req, res) {
         try {
             const page = req.query.page || 1;
             const limit = 10;
-            const offset  = (page -1 ) * limit;
-            const searchQuery = req.query.search
+            const offset = (page - 1) * limit;
+            const searchQuery = req.query.search;
+    
             const products = await productModel.findAll({
-                where: searchQuery
-                  ? {
-                      Name: {
-                        [Op.like]: `%${searchQuery}%`
-                      }
-                    }
-                  : undefined,
+                where: {
+                    ...(searchQuery && {
+                        Name: {
+                            [Op.like]: `%${searchQuery}%`,
+                        },
+                    }),
+                    status: 'active', 
+                },
                 limit,
-                offset
+                offset,
             });
-            return res.status(200).json({products});
+    
+            return res.status(200).json({ products });
         } catch (error) {
-            res.status(403).json({error});
+            res.status(403).json({ error });
             return;
         }
     }

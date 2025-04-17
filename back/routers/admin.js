@@ -7,4 +7,5 @@ adminRouter.post('/create', adminController.create)
 adminRouter.post('/login', adminController.login)
 adminRouter.get('/counts', adminAuth , adminController.counts)
 adminRouter.get('/customers', adminAuth , adminController.getAllCustomers)
+adminRouter.get('/products', adminAuth , adminController.getAllProducts)
 export default adminRouter;

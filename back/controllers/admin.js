@@ -74,5 +74,27 @@ class Admin{
             return res.status(400).json({error})
         }
     }
+    async getAllProducts(req , res){
+        try {
+            const page = req.query.page || 1;
+            const limit = 10;
+            const offset  = (page -1 ) * limit;
+            const searchQuery = req.query.search
+            const products = await productModel.findAll({
+                where: searchQuery
+                  ? {
+                      Name: {
+                        [Op.like]: `%${searchQuery}%`
+                      }
+                    }
+                  : undefined,
+                limit,
+                offset
+            });
+            return res.status(200).json({products});
+        } catch (error) {
+            return res.status(400).json({error})
+        }
+    }
 }
 export default Admin;

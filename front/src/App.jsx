@@ -7,6 +7,7 @@ import Login from "./customer-pages/login";
 import AdminLogin from "./admin-pages/login";
 import AdminHome from "./admin-pages/home";
 import Customers from "./admin-pages/customers";
+import Products from "./admin-pages/products";
 function App() {
   const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ function App() {
         {
           path: 'customers',
           element: <Customers />
+        },
+        {
+          path: 'products',
+          element: <Products />
         }
       ]
     }
