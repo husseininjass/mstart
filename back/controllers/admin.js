@@ -2,6 +2,7 @@ import adminModel from "../models/admin.js";
 import jwt from 'jsonwebtoken';
 import productModel from "../models/products.js";
 import CustomerModel from "../models/customer.js";
+import { Op } from "sequelize";
 class Admin{
     async create(req , res){
         try {
@@ -46,6 +47,29 @@ class Admin{
             const totalPropducts = await productModel.count();
             const totalCustomers = await CustomerModel.count();
             return res.status(200).json({totalCustomers,totalPropducts});
+        } catch (error) {
+            return res.status(400).json({error})
+        }
+    }
+    async getAllCustomers(req , res){
+        try {
+            const page = req.query.page || 1;
+            const limit = 10;
+            const offset  = (page -1 ) * limit;
+            const searchQuery = req.query.search
+            const customers = await CustomerModel.findAll({
+                attributes: { exclude: ['Password'] },
+                where: searchQuery
+                  ? {
+                      Name: {
+                        [Op.like]: `%${searchQuery}%`
+                      }
+                    }
+                  : undefined,
+                limit,
+                offset
+            });
+            return res.status(200).json({customers});
         } catch (error) {
             return res.status(400).json({error})
         }
