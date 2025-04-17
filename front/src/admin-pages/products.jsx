@@ -78,14 +78,15 @@ function Products(){
           }));
         }
     };
-    const addProduct = async  ()=>{
+    const addProduct = async  (e)=>{
+        e.preventDefault();
         const form = new FormData();
         form.append("Name", formData.Name);
         form.append("Description", formData.Description);
         form.append("Amount", formData.Amount);
         form.append("photo", formData.photo);
         try {
-            axios.post(`${apiUrl}/product/create`, form,{
+            await axios.post(`${apiUrl}/product/create`, form,{
                 headers:{
                     Authorization: `Bearer ${localStorage.getItem('adminToken')}`
                 }
