@@ -62,6 +62,7 @@ function Customers(){
                             <th scope="col">Gender</th>
                             <th scope="col">Date Of Birth</th>
                             <th scope="col">Photo</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,6 +77,7 @@ function Customers(){
                                     <td>{customer.Gender}</td>
                                     <td>{new Date(customer.Date_Of_Birth).toLocaleDateString()}</td>
                                     <td><img src={customer.Photo} alt="" width={'50px'} height={'50px'}/></td>
+                                    <td><button className="btn btn-danger">Delete</button></td>
                                 </tr>
                             ))
                         }

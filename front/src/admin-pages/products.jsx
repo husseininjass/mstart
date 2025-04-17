@@ -1,7 +1,7 @@
 import NavBar from "./navbar";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 function Products(){
@@ -10,6 +10,7 @@ function Products(){
     const [search, setSearch] = useState("");
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
+    const dialog = useRef();
     useEffect(()=>{
         const getAllCustomers = async ()=>{
             try {
@@ -56,6 +57,12 @@ function Products(){
             }
         }
     }
+    const openModal = ()=>{
+        dialog.current.showModal();
+    }
+    const closeModal = ()=>{
+        dialog.current.close()
+    }
     return(
         <>
             <NavBar />
@@ -64,6 +71,7 @@ function Products(){
                 <button type="submit" className="btn btn-primary ms-2">Search</button>
             </form>
             <h3 className="text-center mb-5">Products Table</h3>
+            <div className="text-center mb-5"><button className="btn btn-primary" onClick={openModal}>Add New Product</button></div>
             <div className="d-flex justify-content-center mb-5">
                 
                 <table className="table table-hover w-75">
@@ -116,6 +124,37 @@ function Products(){
                 />
                 </Stack>
             </div>
+            <dialog ref={dialog} className="w-25 rounded">
+                <div className="d-flex flex-row-reverse mb-3"><button onClick={closeModal} className="btn btn-danger">close</button></div>
+                <div className="d-flex justify-content-center mb-3">
+                    <form className="w-75 text-center mb-3">
+                        <h3 className="mb-5">Add Product Form</h3>
+
+                        <div className="mb-3 text-start">
+                        <label htmlFor="name" className="form-label">Name</label>
+                        <input type="text" className="form-control" id="name" name="Name"  />
+                        </div>
+
+                        <div className="mb-3 text-start">
+                        <label htmlFor="Description" className="form-label">Description</label>
+                        <input type="text" className="form-control" id="Description" name="Description"  />
+                        </div>
+
+                        <div className="mb-3 text-start">
+                        <label htmlFor="Amount" className="form-label">Amount</label>
+                        <input type="text" className="form-control" id="Amount" name="Amount"  />
+                        </div>
+
+                        <div className="mb-5 text-start">
+                        <label htmlFor="photo" className="form-label">photo</label>
+                        <input type="file" className="form-control" id="photo" name="photo"  />
+                        </div>
+
+
+                        <button type="submit" className="btn btn-primary w-100">Add</button>
+                    </form>
+                </div>
+            </dialog>
         </>
     )
 }
