@@ -11,6 +11,7 @@ function Products(){
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
     const dialog = useRef();
+    const [formData,setFormData] = useState({});
     useEffect(()=>{
         const getAllCustomers = async ()=>{
             try {
@@ -62,6 +63,39 @@ function Products(){
     }
     const closeModal = ()=>{
         dialog.current.close()
+    }
+    const handleChange = (e) => {
+        const { name, value, type, files } = e.target;
+        if (type === "file") {
+          setFormData((prevState) => ({
+            ...prevState,
+            [name]: files[0], 
+          }));
+        } else {
+          setFormData((prevState) => ({
+            ...prevState,
+            [name]: value, 
+          }));
+        }
+    };
+    const addProduct = async  ()=>{
+        const form = new FormData();
+        form.append("Name", formData.Name);
+        form.append("Description", formData.Description);
+        form.append("Amount", formData.Amount);
+        form.append("photo", formData.photo);
+        try {
+            axios.post(`${apiUrl}/product/create`, form,{
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            })
+            window.location.reload();
+        } catch (error) {
+            if(error.response.status === 403){
+                navigate('/admin/login');
+            }
+        }
     }
     return(
         <>
@@ -132,26 +166,26 @@ function Products(){
 
                         <div className="mb-3 text-start">
                         <label htmlFor="name" className="form-label">Name</label>
-                        <input type="text" className="form-control" id="name" name="Name"  />
+                        <input type="text" className="form-control" id="name" name="Name"  onChange={handleChange}/>
                         </div>
 
                         <div className="mb-3 text-start">
                         <label htmlFor="Description" className="form-label">Description</label>
-                        <input type="text" className="form-control" id="Description" name="Description"  />
+                        <input type="text" className="form-control" id="Description" name="Description"  onChange={handleChange}/>
                         </div>
 
                         <div className="mb-3 text-start">
                         <label htmlFor="Amount" className="form-label">Amount</label>
-                        <input type="text" className="form-control" id="Amount" name="Amount"  />
+                        <input type="text" className="form-control" id="Amount" name="Amount"  onChange={handleChange}/>
                         </div>
 
                         <div className="mb-5 text-start">
                         <label htmlFor="photo" className="form-label">photo</label>
-                        <input type="file" className="form-control" id="photo" name="photo"  />
+                        <input type="file" className="form-control" id="photo" name="photo"  onChange={handleChange}/>
                         </div>
 
 
-                        <button type="submit" className="btn btn-primary w-100">Add</button>
+                        <button type="submit" className="btn btn-primary w-100" onClick={addProduct}>Add</button>
                     </form>
                 </div>
             </dialog>
