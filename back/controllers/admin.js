@@ -1,5 +1,7 @@
 import adminModel from "../models/admin.js";
 import jwt from 'jsonwebtoken';
+import productModel from "../models/products.js";
+import CustomerModel from "../models/customer.js";
 class Admin{
     async create(req , res){
         try {
@@ -35,6 +37,15 @@ class Admin{
             }
             const token = jwt.sign({id: admin.ID}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES});
             return res.status(200).json({message: 'logged in',token})
+        } catch (error) {
+            return res.status(400).json({error})
+        }
+    }
+    async counts(req,res){
+        try {
+            const totalPropducts = await productModel.count();
+            const totalCustomers = await CustomerModel.count();
+            return res.status(200).json({totalCustomers,totalPropducts});
         } catch (error) {
             return res.status(400).json({error})
         }

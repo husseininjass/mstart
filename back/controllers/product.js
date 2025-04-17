@@ -1,6 +1,7 @@
 import multer from 'multer';
 import sharp from 'sharp';
 import productModel from '../models/products.js';
+import { Op } from 'sequelize';
 class Product{
     uploadPhoto(){
         const multerStorage = multer.memoryStorage();
@@ -63,6 +64,29 @@ class Product{
             product.Status = newStatus;
             await product.save();
             return res.status(200).json({message: 'product status has been updated'})
+        } catch (error) {
+            res.status(403).json({error});
+            return;
+        }
+    }
+    async getAllProducts(req, res){
+        try {
+            const page = req.query.page || 1;
+            const limit = 10;
+            const offset  = (page -1 ) * limit;
+            const searchQuery = req.query.search
+            const products = await productModel.findAll({
+                where: searchQuery
+                  ? {
+                      Name: {
+                        [Op.like]: `%${searchQuery}%`
+                      }
+                    }
+                  : undefined,
+                limit,
+                offset
+            });
+            return res.status(200).json({products});
         } catch (error) {
             res.status(403).json({error});
             return;

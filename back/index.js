@@ -23,6 +23,9 @@ const testConnection = async () => {
 };
 testConnection();
 //global midleware
+app.use(cors({
+  origin: 'http://localhost:5173'
+}))
 app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
