@@ -202,7 +202,6 @@ class Customer{
             return res.status(200).json({ sessionId: session.id });
     
         } catch (error) {
-            console.error("Error during payment process:", error);
             return res.status(500).json({ message: 'Payment process failed', error: error.message });
         }
     }
