@@ -7,4 +7,7 @@ customerRouter.post('/create', customerController.create)
 customerRouter.post('/login', customerController.logIn)
 customerRouter.patch('/updatestatus', auth , customerController.updateCustomerStatus)
 customerRouter.put('/updateuserphoto/:id',auth,customerController.uploadPhoto(),customerController.savePhoto,customerController.updateCustomerPhoto)
+customerRouter.post('/addtocart', auth , customerController.addToCart)
+customerRouter.get('/getcartproducts', auth , customerController.getCartProducts)
+customerRouter.post('/payment', auth , customerController.payment)
 export default customerRouter;

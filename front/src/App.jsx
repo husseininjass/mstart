@@ -8,6 +8,7 @@ import AdminLogin from "./admin-pages/login";
 import AdminHome from "./admin-pages/home";
 import Customers from "./admin-pages/customers";
 import Products from "./admin-pages/products";
+import Cart from "./customer-pages/cart";
 function App() {
   const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ function App() {
         {
           path: 'login',
           element: <Login />
+        },
+        {
+          path: 'cart',
+          element: <Cart />
         }
       ]
     },

@@ -96,5 +96,23 @@ class Admin{
             return res.status(400).json({error})
         }
     }
+    async deleteCustomers(req, res){
+        const ids = req.params.id.split(',').map(id => Number(id));
+        try {
+            await Promise.all(
+                ids.map(async (id)=>{
+                    const customer = await CustomerModel.findByPk(id);
+                    if (!customer) {
+                        throw new Error(`Customer with ID ${id} not found`);
+                    }
+                    customer.Status = 'deleted';
+                    await customer.save()
+                })
+            )
+            return res.status(200).json({message: 'customer has been deleted'})
+        } catch (error) {
+            return res.status(400).json({error})
+        }
+    }
 }
 export default Admin;

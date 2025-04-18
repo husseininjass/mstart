@@ -2,6 +2,12 @@ import CustomerModel from "../models/customer.js";
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import sharp from 'sharp';
+import cartEvent from "../events/create-cart.js";
+import cartModel from "../models/cart.js";
+import cartProduct from "../models/cartProducts.js";
+import productModel from "../models/products.js";
+import Stripe from "stripe";
+import emptiedCartEvent from "../events/emptiedcart.js";
 class Customer{
     async create(req,res){
         try {
@@ -34,11 +40,15 @@ class Customer{
             if(!loggedInUser){
                 return res.status(400).json({message: 'no email found'});
             }
+            if(loggedInUser.Status === 'deleted'){
+                return res.status(400).json({message: 'this email is deleted please contact us first'});
+            }
             const isMatch = await loggedInUser.validatePassword(password);
             if(!isMatch){
                 return res.status(400).json({message: 'invalid email or password'});
             }
             const token = jwt.sign({id: loggedInUser.ID},process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES})
+            cartEvent.emit('loggedin', loggedInUser.ID)
             return res.status(200).json({message: 'logged in',token})
         } catch (error) {
             return res.status(400).json({error})
@@ -106,5 +116,96 @@ class Customer{
             return;
         }
     }
+    async addToCart(req, res){
+        const productID = req.body.productId
+        try {
+            const cart = await cartModel.findOne({where:{
+                customerID: req.customer.ID
+            }})
+            if(!cart) return res.status(400).json({message: 'no cart found'});
+            await cartProduct.create({
+                cartID: cart.ID,
+                productID: productID
+            })
+            return res.status(200).json({message: 'prodcut has been added to cart'})
+        } catch (error) {
+            res.status(400).json({error});
+            return;
+        }
+    }
+    async getCartProducts(req ,res){
+        try {
+            const cart = await cartModel.findOne({
+              where: { customerID: req.customer.ID },
+            });
+        
+            if (!cart) {
+              return res.status(404).json({ message: 'Cart not found' });
+            }
+            const productsInCart = await cartProduct.findAll({
+              where: { cartID: cart.ID },
+              include: [productModel], 
+            });
+        
+            return res.status(200).json({ products: productsInCart });
+        } catch (error) {
+            return res.status(500).json({ message: 'Failed to get cart products', error });
+        }
+    }
+
+    async  payment(req, res) {
+        try {
+            const cart = await cartModel.findOne({
+                where: {
+                    customerID: req.customer.ID
+                },
+                include: {
+                    model: cartProduct,
+                    include: [productModel], 
+                }
+            });            
+            if (!cart) {
+                return res.status(404).json({ message: 'Cart not found' });
+            }
+            const totalPrice = cart.CartProducts.reduce((acc, item) => {
+                return acc + parseFloat(item.Product.Amount);
+            }, 0).toFixed(2);
+            const productNames = cart.CartProducts.map(item => item.Product.Name).join(",");
+            const stripeSecret = process.env.STRIPE_SECRET;
+            if (!stripeSecret) {
+                throw new Error("Stripe Secret Key is missing");
+            }
+    
+            const stripe = new Stripe(stripeSecret);
+            const product = await stripe.products.create({
+                name: productNames,
+            });
+            const price = await stripe.prices.create({
+                product: product.id,
+                unit_amount: parseInt(totalPrice * 100), 
+                currency: 'usd' 
+            });
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                success_url: `http://localhost:5173/`, 
+                cancel_url: `http://localhost:5173/cart`, 
+                client_reference_id: req.customer.ID, 
+                line_items: [
+                    {
+                        price: price.id,
+                        quantity: 1 
+                    }
+                ],
+                mode: 'payment',
+            });
+            emptiedCartEvent.emit('payment' , cart.ID)
+            return res.status(200).json({ sessionId: session.id });
+    
+        } catch (error) {
+            console.error("Error during payment process:", error);
+            return res.status(500).json({ message: 'Payment process failed', error: error.message });
+        }
+    }
+    
 }
 export default Customer;

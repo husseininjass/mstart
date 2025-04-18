@@ -15,6 +15,9 @@ const auth = async (req,res,next)=>{
         if(!customer){
             return res.status(400).json({message: 'no user found'});
         }
+        if(customer.Status === 'deleted'){
+            return res.status(400).json({message: 'deleted user cannot make a request'});
+        }
         req.customer = customer;
         next();
     } catch (error) {

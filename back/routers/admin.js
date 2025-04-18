@@ -8,4 +8,5 @@ adminRouter.post('/login', adminController.login)
 adminRouter.get('/counts', adminAuth , adminController.counts)
 adminRouter.get('/customers', adminAuth , adminController.getAllCustomers)
 adminRouter.get('/products', adminAuth , adminController.getAllProducts)
+adminRouter.delete('/deletecustomers/:id', adminAuth , adminController.deleteCustomers)
 export default adminRouter;

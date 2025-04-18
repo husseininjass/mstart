@@ -10,6 +10,8 @@ import CustomerModel from './models/customer.js';
 import productModel from './models/products.js';
 import adminRouter from './routers/admin.js';
 import productRouter from './routers/product.js';
+import cartModel from './models/cart.js';
+import './models/cart-customer-relation.js';
 const app = express();
 dotenv.config({ path: './config.env' });
 

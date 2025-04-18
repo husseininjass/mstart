@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../db/connection.js'; 
 import bcrypt from 'bcryptjs';
-
 const CustomerModel = sequelize.define('Customer', {
   ID: {
     type: DataTypes.INTEGER,

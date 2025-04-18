@@ -38,7 +38,17 @@ function Home() {
     setSearch(searchValue);
     setPage(1);
   };
-
+  const addToCart = async (productId)=>{
+    try {
+      await axios.post(`${apiUrl}/customer/addtocart`,{productId},{
+        headers:{
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+    } catch (error) {
+      
+    }
+  }
   return (
     <>
         <Navbar />
@@ -56,7 +66,7 @@ function Home() {
               <p className="card-text text-center">{product.Description}</p>
               <p className="card-text text-center">{product.Amount} {product.Currency}</p>
               <div className="text-center">
-                <button className="btn btn-primary">Make Order</button>
+                <button className="btn btn-primary" onClick={()=>addToCart(product.ID)}>Add To Cart</button>
               </div>
             </div>
           </div>

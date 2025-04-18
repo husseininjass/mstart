@@ -10,6 +10,7 @@ function Customers(){
     const [search, setSearch] = useState("");
     const [customers, setCustomers] = useState([]);
     const navigate = useNavigate();
+    const [selectedCustomers, setSelectedCustomers] = useState([]);
     useEffect(()=>{
         const getAllCustomers = async ()=>{
             try {
@@ -41,6 +42,32 @@ function Customers(){
         setSearch(searchValue);
         setPage(1);
     };
+    const handleSelected = (id) => {
+        setSelectedCustomers((prev) =>
+          prev.includes(id)
+            ? prev.filter((item) => item !== id)
+            : [...prev, id] 
+        );
+    };
+    
+      const deleteCustomers = async () => {
+        if (selectedCustomers.length < 1) {
+          return;
+        }
+        const customersIds = selectedCustomers.join(',');
+        try {
+          await axios.delete(`${apiUrl}/admin/deletecustomers/${customersIds}`,{
+            headers:{
+                Authorization: `Bearer ${localStorage.getItem('adminToken')}`
+            }
+          });
+          window.location.reload();
+        } catch (error) {
+            if(error.response.status === 403){
+                navigate('/admin/login');
+            }
+        }
+      };
     return(
         <>
             <NavBar />
@@ -49,7 +76,7 @@ function Customers(){
                 <button type="submit" className="btn btn-primary ms-2">Search</button>
             </form>
             <h3 className="text-center mb-5">Customer Table</h3>
-            <div className="d-flex justify-content-center mb-5">
+            <div className="d-flex justify-content-center">
                 
                 <table className="table table-hover w-75">
                     <thead>
@@ -62,7 +89,7 @@ function Customers(){
                             <th scope="col">Gender</th>
                             <th scope="col">Date Of Birth</th>
                             <th scope="col">Photo</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Select</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,13 +104,19 @@ function Customers(){
                                     <td>{customer.Gender}</td>
                                     <td>{new Date(customer.Date_Of_Birth).toLocaleDateString()}</td>
                                     <td><img src={customer.Photo} alt="" width={'50px'} height={'50px'}/></td>
-                                    <td><button className="btn btn-danger">Delete</button></td>
+                                    <td>
+                                        <div className="form-check p-3">
+                                            <input className="form-check-input" type="checkbox" id="flexCheckDefault" onChange={()=>handleSelected(customer.ID)}/>
+                                            <label className="form-check-label" htmlFor="flexCheckDefault"></label>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))
                         }
                     </tbody>
                 </table>
             </div>
+            <div className="text-center mb-5"><button className="btn btn-danger" onClick={deleteCustomers}>Delete Selected Customers</button></div>
             <div className="d-flex justify-content-center products-pagination mb-5">
                 <Stack spacing={2}>
                 <Pagination
