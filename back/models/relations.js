@@ -2,7 +2,9 @@ import CustomerModel from "./customer.js";
 import cartModel from "./cart.js";
 import productModel from "./products.js";
 import cartProduct from "./cartProducts.js";
-// Customer 1:1 Cart
+import orderModel from "./order.js";
+import orderItem from "./orderItem.js";
+
 CustomerModel.hasOne(cartModel, {
   foreignKey: 'customerID',
   sourceKey: 'ID',
@@ -12,7 +14,6 @@ cartModel.belongsTo(CustomerModel, {
   targetKey: 'ID',
 });
 
-// Cart 1:M CartItems
 cartModel.hasMany(cartProduct, {
   foreignKey: 'cartID',
   sourceKey: 'ID',
@@ -22,12 +23,39 @@ cartProduct.belongsTo(cartModel, {
   targetKey: 'ID',
 });
 
-// Product 1:M CartItems
 productModel.hasMany(cartProduct, {
   foreignKey: 'productID',
   sourceKey: 'ID',
 });
 cartProduct.belongsTo(productModel, {
   foreignKey: 'productID',
+  targetKey: 'ID',
+});
+orderModel.hasMany(orderItem, {
+  foreignKey: 'orderId',
+  sourceKey: 'ID'
+});
+
+orderItem.belongsTo(orderModel, {
+  foreignKey: 'orderId',
+  targetKey: 'ID'
+});
+
+orderItem.belongsTo(productModel, {
+  foreignKey: 'productId',
+  targetKey: 'ID'
+});
+
+productModel.hasMany(orderItem, {
+  foreignKey: 'productId',
+  sourceKey: 'ID'
+});
+CustomerModel.hasMany(orderModel, {
+  foreignKey: 'customerId',
+  sourceKey: 'ID',
+});
+
+orderModel.belongsTo(CustomerModel, {
+  foreignKey: 'customerId',
   targetKey: 'ID',
 });

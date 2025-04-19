@@ -34,7 +34,7 @@ function AdminHome(){
                     Total Products: {counts.totalPropducts}
                 </div>
                 <div className="p-5 shadow fs-2">
-                    Total Orders: {counts.totalPropducts}
+                    Total Orders: {counts.totalOrders}
                 </div>
             </div>
         </>

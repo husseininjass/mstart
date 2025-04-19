@@ -9,6 +9,8 @@ import AdminHome from "./admin-pages/home";
 import Customers from "./admin-pages/customers";
 import Products from "./admin-pages/products";
 import Cart from "./customer-pages/cart";
+import Profile from "./customer-pages/profile";
+import Orders from "./admin-pages/orders";
 function App() {
   const router = createBrowserRouter([
     {
@@ -29,6 +31,10 @@ function App() {
         {
           path: 'cart',
           element: <Cart />
+        },
+        {
+          path: 'profile',
+          element: <Profile />
         }
       ]
     },
@@ -50,6 +56,10 @@ function App() {
         {
           path: 'products',
           element: <Products />
+        },
+        {
+          path: 'orders',
+          element: <Orders />
         }
       ]
     }

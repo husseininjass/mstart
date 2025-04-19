@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import productModel from "../models/products.js";
 import CustomerModel from "../models/customer.js";
 import { Op } from "sequelize";
+import orderModel from "../models/order.js";
 class Admin{
     async create(req , res){
         try {
@@ -46,7 +47,8 @@ class Admin{
         try {
             const totalPropducts = await productModel.count();
             const totalCustomers = await CustomerModel.count();
-            return res.status(200).json({totalCustomers,totalPropducts});
+            const totalOrders = await orderModel.count();
+            return res.status(200).json({totalCustomers,totalPropducts,totalOrders});
         } catch (error) {
             return res.status(400).json({error})
         }
@@ -111,6 +113,30 @@ class Admin{
             )
             return res.status(200).json({message: 'customer has been deleted'})
         } catch (error) {
+            return res.status(400).json({error})
+        }
+    }
+    async getAllOrders(req,res){
+        try {
+            const page = req.query.page || 1;
+            const limit = 10;
+            const offset  = (page -1 ) * limit;
+            const searchQuery = req.query.search;
+            const orders = await orderModel.findAll({
+                include: [CustomerModel],
+                where: searchQuery
+                ? {
+                    customerId: {
+                      [Op.like]: `%${searchQuery}%`
+                    }
+                  }
+                : undefined,
+              limit,
+              offset
+            });
+            return res.status(200).json({orders})
+        } catch (error) {
+            console.error(error)
             return res.status(400).json({error})
         }
     }

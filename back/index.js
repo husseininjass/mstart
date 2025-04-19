@@ -11,7 +11,9 @@ import productModel from './models/products.js';
 import adminRouter from './routers/admin.js';
 import productRouter from './routers/product.js';
 import cartModel from './models/cart.js';
-import './models/cart-customer-relation.js';
+import orderModel from './models/order.js';
+import orderItem from './models/orderItem.js';
+import './models/relations.js';
 const app = express();
 dotenv.config({ path: './config.env' });
 

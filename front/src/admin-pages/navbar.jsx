@@ -11,6 +11,7 @@ function NavBar(){
                 <div><a href="/admin" className="text-decoration-none fs-5">Home</a></div>
                 <div><a href="/admin/customers" className="text-decoration-none fs-5">Customers</a></div>
                 <div><a href="/admin/products" className="text-decoration-none fs-5">Products</a></div>
+                <div><a href="/admin/orders" className="text-decoration-none fs-5">Orders</a></div>
                 <div><a href="" className="text-decoration-none fs-5" onClick={logOut}>Log Out</a></div>
             </div>
         </>

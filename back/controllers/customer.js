@@ -8,6 +8,8 @@ import cartProduct from "../models/cartProducts.js";
 import productModel from "../models/products.js";
 import Stripe from "stripe";
 import emptiedCartEvent from "../events/emptiedcart.js";
+import orderEvent from "../events/makeorder.js";
+import orderModel from "../models/order.js";
 class Customer{
     async create(req,res){
         try {
@@ -105,7 +107,7 @@ class Customer{
         }
     }
     async updateCustomerPhoto(req,res){
-        const customerId = req.params.id;
+        const customerId = req.customer.ID;
         try {
             const customer = await CustomerModel.findByPk(customerId);
             customer.Photo = `http://127.0.0.1:3000/public/customers/${req.body.photo}`
@@ -171,6 +173,8 @@ class Customer{
                 return acc + parseFloat(item.Product.Amount);
             }, 0).toFixed(2);
             const productNames = cart.CartProducts.map(item => item.Product.Name).join(",");
+            const productsID = cart.CartProducts.map(item => item.Product.ID);
+            
             const stripeSecret = process.env.STRIPE_SECRET;
             if (!stripeSecret) {
                 throw new Error("Stripe Secret Key is missing");
@@ -198,11 +202,24 @@ class Customer{
                 ],
                 mode: 'payment',
             });
+            orderEvent.emit('payment' , cart.customerID, totalPrice , productsID);
             emptiedCartEvent.emit('payment' , cart.ID)
             return res.status(200).json({ sessionId: session.id });
     
         } catch (error) {
             return res.status(500).json({ message: 'Payment process failed', error: error.message });
+        }
+    }
+    async getCounts(req, res){
+        try {
+            const customerId = req.customer.ID;
+            const ordersCount = await orderModel.findAndCountAll({where:{
+                customerId: customerId
+            }})
+            return res.status(200).json({ordersCount})
+        } catch (error) {
+            res.status(400).json({error});
+            return;
         }
     }
     
