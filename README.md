@@ -12,6 +12,6 @@ To run the frontend:
 To run the backend:
 1-Navigate to the back folder (cd back)
 2-Run: npm install
-3-Run: npm run create to create the database and tables (you can change the name of the data base from the config.env file)
+3-Run: npm run create to create the database and tables (you can change the name of the data base from the config.env file) make sure to make the mysql running
 4-Run: npm run seed to create admin 
 5-Run: npm start to start the backend server
