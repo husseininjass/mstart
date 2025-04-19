@@ -39,6 +39,18 @@ function Profile() {
             alert("Upload failed.");
         }
     }
+    const cancelOrder = async (orderId)=>{
+        try {
+            await axios.delete(`${apiUrl}/customer/cancelorder/${orderId}`,{
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            window.location.reload();
+        } catch (error) {
+            
+        }
+    }
     return (
         <>
             <Navbar />
@@ -64,6 +76,7 @@ function Profile() {
                             <th scope="col">#</th>
                             <th scope="col">totalAmount</th>
                             <th scope="col">Order Date</th>
+                            <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,6 +86,7 @@ function Profile() {
                                         <td>{index+1}</td>
                                         <td>{order.totalAmount}</td>
                                         <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                        <td><button className="btn btn-danger" onClick={()=>cancelOrder(order.ID)}>Cancel Order</button></td>
                                     </tr>
                                 ))
                             }

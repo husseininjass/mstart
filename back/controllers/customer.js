@@ -222,6 +222,16 @@ class Customer{
             return;
         }
     }
-    
+    async cancelOrder(req ,res){
+        const orderID = req.params.id
+        try {
+            const order = await orderModel.findByPk(orderID);
+            await order.destroy();
+            return res.status(200).json({message: 'order has been canceled'})
+        } catch (error) {
+            res.status(400).json({error});
+            return;
+        }
+    }
 }
 export default Customer;

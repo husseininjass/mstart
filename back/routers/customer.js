@@ -11,4 +11,5 @@ customerRouter.post('/addtocart', auth , customerController.addToCart)
 customerRouter.get('/getcartproducts', auth , customerController.getCartProducts)
 customerRouter.post('/payment', auth , customerController.payment)
 customerRouter.get('/counts', auth , customerController.getCounts)
+customerRouter.delete('/cancelorder/:id', auth , customerController.cancelOrder)
 export default customerRouter;
