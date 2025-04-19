@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "create": "node db/createDB.js"
+    "create": "node db/createDB.js",
+    "seed" : "node seeds/createadmin.js"
   },
   "author": "",
   "license": "ISC",
