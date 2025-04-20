@@ -1,4 +1,4 @@
-# mstar-tHiring-Task
+# Mstart-Hiring-Task
 -Node.js must be installed
 -MySQL server should be running (e.g , XAMPP)
 
