@@ -9,6 +9,8 @@ To run the frontend:
 4-to move to admin page use the /admin path 
 5-the admin email: admin@mstart.com password: 123456789
 6-for payment : card number : 4242 4242 4242 4242 , Use a valid future date, such as 12/34 , Use any three-digit CVC
+
+
 To run the backend:
 1-Navigate to the back folder (cd back)
 2-Run: npm install
